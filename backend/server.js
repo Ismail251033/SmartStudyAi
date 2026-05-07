@@ -67,6 +67,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 app.use(express.static(path.join(__dirname, '../frontend')));
+
 app.listen(PORT, () => {
   console.log(`🚀 SmartStudyAI Backend running on port ${PORT}`);
   console.log(`📚 Environment: ${process.env.NODE_ENV || 'development'}`);
