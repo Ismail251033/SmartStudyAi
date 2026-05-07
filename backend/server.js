@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
 });
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 SmartStudyAI Backend running on port ${PORT}`);
