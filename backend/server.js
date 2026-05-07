@@ -11,7 +11,6 @@ const userRoutes = require('./routes/user');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 // Security middleware
 app.use(helmet({
@@ -83,9 +82,11 @@ app.get('/', (req, res) => {
 });
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 SmartStudyAI Backend running on port ${PORT}`);
-  console.log(`📚 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
+
 
 module.exports = app;
