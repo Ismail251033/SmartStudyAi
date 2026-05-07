@@ -19,8 +19,23 @@ app.use(helmet({
 }));
 
 // CORS
+const devOrigins = ['http://127.0.0.1:5500', 'http://localhost:5500'];
+const prodOrigins = [
+  'https://smartstudyai-production.up.railway.app',
+  ...(process.env.RAILWAY_PUBLIC_DOMAIN
+    ? [`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`]
+    : [])
+];
+const allowedOrigins =
+  process.env.NODE_ENV === 'production' ? prodOrigins : devOrigins;
+
 app.use(cors({
-  origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS policy: origin ${origin} is not allowed`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
