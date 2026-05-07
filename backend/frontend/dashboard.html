@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — SmartStudyAI</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+  <div class="app-layout">
+
+    <!-- ─── Sidebar ──────────────────────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a class="sidebar-logo" href="dashboard.html">
+          <div class="sidebar-logo-icon">🧠</div>
+          <span class="sidebar-logo-text">SmartStudyAI</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-section">
+          <div class="sidebar-nav-label">Main</div>
+          <button class="nav-item active" onclick="showPanel('dashboard')" id="nav-dashboard">
+            <span class="nav-icon">🏠</span>
+            Dashboard
+          </button>
+          <button class="nav-item" onclick="showPanel('summary')" id="nav-summary">
+            <span class="nav-icon">📄</span>
+            AI Summary
+          </button>
+          <button class="nav-item" onclick="showPanel('quiz')" id="nav-quiz">
+            <span class="nav-icon">❓</span>
+            Quiz Generator
+          </button>
+          <button class="nav-item" onclick="showPanel('flashcards')" id="nav-flashcards">
+            <span class="nav-icon">🧠</span>
+            Flashcards
+          </button>
+          <button class="nav-item" onclick="showPanel('qa')" id="nav-qa">
+            <span class="nav-icon">💬</span>
+            Q&amp;A Assistant
+          </button>
+        </div>
+
+        <div class="sidebar-nav-section">
+          <div class="sidebar-nav-label">Account</div>
+          <button class="nav-item" onclick="showPanel('profile')" id="nav-profile">
+            <span class="nav-icon">👤</span>
+            Profile
+          </button>
+        </div>
+      </nav>
+
+      <!-- XP Bar in sidebar -->
+      <div style="padding: 0 1.25rem 0.75rem;">
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;">
+          <span id="user-level">Level 1</span>
+          <span id="xp-detail">0 / 100 XP</span>
+        </div>
+        <div class="xp-bar-wrapper">
+          <div class="xp-bar-fill" id="xp-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebar-avatar">U</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-username" id="sidebar-username">Loading...</div>
+          <div class="sidebar-level" id="user-xp-label">0 XP total</div>
+        </div>
+        <button class="sidebar-signout" id="signout-btn" title="Sign out">⬡</button>
+      </div>
+    </aside>
+
+    <!-- ─── Main Content ──────────────────────────────────── -->
+    <main class="main-content">
+      <header class="page-header">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+          <h1 class="page-title" id="page-title">Dashboard</h1>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span id="header-streak" style="font-size:0.85rem;color:var(--accent-warning)"></span>
+          <div id="user-xp-badge" style="font-size:0.85rem;color:var(--accent-primary);font-weight:600;"></div>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- ─── Dashboard Panel ──────────────────────────── -->
+        <div class="feature-panel active" id="panel-dashboard">
+          <!-- Stats -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon purple">⚡</div>
+              <div>
+                <div class="stat-value" id="stat-xp">0</div>
+                <div class="stat-label">Total XP</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon cyan">🏅</div>
+              <div>
+                <div class="stat-value" id="stat-level">1</div>
+                <div class="stat-label">Current Level</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon orange">🔥</div>
+              <div>
+                <div class="stat-value" id="stat-streak">0</div>
+                <div class="stat-label">Day Streak</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green">📊</div>
+              <div>
+                <div class="stat-value" id="stat-activities">0</div>
+                <div class="stat-label">Total Activities</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <!-- Recent Activity -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Recent Activity</h3>
+                <span style="font-size:0.8rem;color:var(--text-muted)">Last 10</span>
+              </div>
+              <div id="activity-list">
+                <div class="skeleton" style="height:40px;margin-bottom:8px;"></div>
+                <div class="skeleton" style="height:40px;margin-bottom:8px;"></div>
+                <div class="skeleton" style="height:40px;"></div>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Your Progress</h3>
+              </div>
+              <div id="progress-stats">
+                <div class="activity-item">
+                  <div class="activity-icon stat-icon purple">📄</div>
+                  <div class="activity-info">
+                    <div class="activity-type">Summaries</div>
+                    <div class="activity-time">AI-powered notes</div>
+                  </div>
+                  <div class="activity-xp" id="count-summaries">—</div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon stat-icon cyan">❓</div>
+                  <div class="activity-info">
+                    <div class="activity-type">Quizzes</div>
+                    <div class="activity-time">Test your knowledge</div>
+                  </div>
+                  <div class="activity-xp" id="count-quizzes">—</div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon stat-icon green">🧠</div>
+                  <div class="activity-info">
+                    <div class="activity-type">Flashcard Sets</div>
+                    <div class="activity-time">Spaced repetition</div>
+                  </div>
+                  <div class="activity-xp" id="count-flashcards">—</div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon stat-icon orange">💬</div>
+                  <div class="activity-info">
+                    <div class="activity-type">Questions Asked</div>
+                    <div class="activity-time">AI tutor sessions</div>
+                  </div>
+                  <div class="activity-xp" id="count-questions">—</div>
+                </div>
+              </div>
+
+              <div style="margin-top:1.5rem;">
+                <div style="display:flex;justify-content:space-between;font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.5rem;">
+                  <span>XP Progress to Next Level</span>
+                  <span id="xp-progress-label"></span>
+                </div>
+                <div class="xp-bar-wrapper" style="height:10px;">
+                  <div class="xp-bar-fill" id="xp-bar-dashboard" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card mt-3">
+            <h3 class="card-title mb-2">Quick Start</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.75rem;">
+              <button class="btn btn-secondary" onclick="showPanel('summary')" style="flex-direction:column;padding:1.25rem;gap:0.5rem;height:auto;">
+                <span style="font-size:1.8rem;">📄</span>
+                <span style="font-weight:600;">Summarize Text</span>
+                <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">+10 XP</span>
+              </button>
+              <button class="btn btn-secondary" onclick="showPanel('quiz')" style="flex-direction:column;padding:1.25rem;gap:0.5rem;height:auto;">
+                <span style="font-size:1.8rem;">❓</span>
+                <span style="font-weight:600;">Take a Quiz</span>
+                <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">+20 XP</span>
+              </button>
+              <button class="btn btn-secondary" onclick="showPanel('flashcards')" style="flex-direction:column;padding:1.25rem;gap:0.5rem;height:auto;">
+                <span style="font-size:1.8rem;">🧠</span>
+                <span style="font-weight:600;">Flashcards</span>
+                <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">+15 XP</span>
+              </button>
+              <button class="btn btn-secondary" onclick="showPanel('qa')" style="flex-direction:column;padding:1.25rem;gap:0.5rem;height:auto;">
+                <span style="font-size:1.8rem;">💬</span>
+                <span style="font-weight:600;">Ask AI</span>
+                <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">+5 XP</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Summary Panel ─────────────────────────────── -->
+        <div class="feature-panel" id="panel-summary">
+          <div class="feature-header">
+            <div class="feature-header-icon purple">📄</div>
+            <div class="feature-header-text">
+              <h2>AI Summary Generator</h2>
+              <p>Paste any text and get a structured, comprehensive summary instantly.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="form-group">
+              <label class="form-label" for="summary-input">Text to Summarize</label>
+              <textarea class="form-input" id="summary-input" placeholder="Paste your text here (articles, notes, textbook chapters, lecture notes...)&#10;&#10;Minimum 50 characters required." style="min-height:200px;"></textarea>
+              <div class="char-count" id="summary-char-count">0 / 10,000</div>
+            </div>
+            <button class="btn btn-primary" id="summary-btn" onclick="generateSummary()">
+              ✨ Generate Summary <span style="opacity:0.7;font-size:0.8rem;">(+10 XP)</span>
+            </button>
+          </div>
+
+          <div id="summary-output" style="display:none;" class="mt-3">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title" id="summary-title">Summary</h3>
+                <div id="summary-badges"></div>
+              </div>
+
+              <div class="summary-overview" id="summary-overview"></div>
+
+              <div class="summary-key-points">
+                <h4>Key Points</h4>
+                <div id="summary-key-points"></div>
+              </div>
+
+              <div id="summary-concepts-section">
+                <h4 style="font-family:var(--font-display);font-size:0.9rem;font-weight:700;color:var(--accent-secondary);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Key Concepts</h4>
+                <div class="concepts-grid" id="summary-concepts"></div>
+              </div>
+
+              <div class="summary-overview mt-2" style="background:rgba(0,229,160,0.07);border-color:rgba(0,229,160,0.2);" id="summary-conclusion"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Quiz Panel ─────────────────────────────────── -->
+        <div class="feature-panel" id="panel-quiz">
+          <div class="feature-header">
+            <div class="feature-header-icon cyan">❓</div>
+            <div class="feature-header-text">
+              <h2>AI Quiz Generator</h2>
+              <p>Test your knowledge with AI-generated multiple choice questions.</p>
+            </div>
+          </div>
+
+          <div class="card" id="quiz-input-card">
+            <div class="form-group">
+              <label class="form-label" for="quiz-input">Study Material</label>
+              <textarea class="form-input" id="quiz-input" placeholder="Paste the text you want to be quizzed on..." style="min-height:180px;"></textarea>
+              <div class="char-count" id="quiz-char-count">0 / 10,000</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="quiz-count">Number of Questions</label>
+              <select class="form-input" id="quiz-count" style="max-width:200px;">
+                <option value="3">3 Questions</option>
+                <option value="5" selected>5 Questions</option>
+                <option value="7">7 Questions</option>
+                <option value="10">10 Questions</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="quiz-btn" onclick="generateQuiz()">
+              🎯 Generate Quiz <span style="opacity:0.7;font-size:0.8rem;">(+20 XP)</span>
+            </button>
+          </div>
+
+          <div id="quiz-output" style="display:none;" class="mt-3">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+              <h3 class="section-title mb-0" id="quiz-title">Quiz</h3>
+              <button class="btn btn-secondary btn-sm" onclick="resetQuiz()">↩ New Quiz</button>
+            </div>
+            <div class="quiz-progress">
+              <div class="xp-bar-wrapper" style="flex:1;height:8px;">
+                <div class="xp-bar-fill" id="quiz-progress-bar" style="width:0%;background:linear-gradient(90deg,var(--accent-secondary),var(--accent-success));"></div>
+              </div>
+              <span style="font-size:0.85rem;color:var(--text-secondary);white-space:nowrap;" id="quiz-progress-text">0 / 0</span>
+            </div>
+            <div id="quiz-questions"></div>
+            <div id="quiz-score-section" style="display:none;" class="mt-3">
+              <div class="quiz-score">
+                <div class="score-number" id="quiz-score-display">0/0</div>
+                <div style="color:var(--text-secondary);margin-top:0.5rem;" id="quiz-score-msg"></div>
+              </div>
+              <div style="display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;">
+                <button class="btn btn-secondary" onclick="resetQuiz()">Try Again</button>
+                <button class="btn btn-primary" onclick="showPanel('summary')">📄 Summarize More</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Flashcards Panel ──────────────────────────── -->
+        <div class="feature-panel" id="panel-flashcards">
+          <div class="feature-header">
+            <div class="feature-header-icon green">🧠</div>
+            <div class="feature-header-text">
+              <h2>AI Flashcard Generator</h2>
+              <p>Create spaced-repetition flashcards from any text. Click a card to flip it.</p>
+            </div>
+          </div>
+
+          <div class="card" id="flashcard-input-card">
+            <div class="form-group">
+              <label class="form-label" for="flashcard-input">Study Material</label>
+              <textarea class="form-input" id="flashcard-input" placeholder="Paste your text to generate flashcards..." style="min-height:180px;"></textarea>
+              <div class="char-count" id="flashcard-char-count">0 / 10,000</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="flashcard-count">Number of Cards</label>
+              <select class="form-input" id="flashcard-count" style="max-width:200px;">
+                <option value="4">4 Cards</option>
+                <option value="8" selected>8 Cards</option>
+                <option value="12">12 Cards</option>
+                <option value="20">20 Cards</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="flashcard-btn" onclick="generateFlashcards()">
+              🧠 Generate Flashcards <span style="opacity:0.7;font-size:0.8rem;">(+15 XP)</span>
+            </button>
+          </div>
+
+          <div id="flashcard-output" style="display:none;" class="mt-3">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+              <div>
+                <h3 class="section-title mb-0" id="flashcard-set-title">Flashcard Set</h3>
+                <p class="section-subtitle" id="flashcard-set-subtitle"></p>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="resetFlashcards()">↩ New Set</button>
+            </div>
+
+            <div class="flashcard-container">
+              <div class="flashcard" id="flashcard-current" onclick="flipCard()">
+                <div class="flashcard-face flashcard-front">
+                  <div class="flashcard-label">Question</div>
+                  <div class="flashcard-content" id="card-front-content"></div>
+                  <div class="flashcard-hint" id="card-hint"></div>
+                </div>
+                <div class="flashcard-face flashcard-back">
+                  <div class="flashcard-label">Answer</div>
+                  <div class="flashcard-content" id="card-back-content"></div>
+                  <div class="difficulty-dots" id="card-difficulty"></div>
+                </div>
+              </div>
+            </div>
+
+            <p class="flashcard-hint-tip">Click the card to flip • Use arrows to navigate</p>
+
+            <div class="flashcard-nav">
+              <button class="btn btn-secondary btn-sm" onclick="prevCard()" id="fc-prev">← Prev</button>
+              <span class="flashcard-counter" id="fc-counter">1 / 8</span>
+              <button class="btn btn-secondary btn-sm" onclick="nextCard()" id="fc-next">Next →</button>
+            </div>
+
+            <!-- All cards grid -->
+            <div class="mt-3">
+              <h4 class="section-title">All Cards</h4>
+              <div id="flashcard-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.75rem;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Q&A Panel ─────────────────────────────────── -->
+        <div class="feature-panel" id="panel-qa">
+          <div class="feature-header">
+            <div class="feature-header-icon orange">💬</div>
+            <div class="feature-header-text">
+              <h2>AI Q&amp;A Assistant</h2>
+              <p>Ask any question and get a detailed, structured answer from your AI tutor.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="form-group">
+              <label class="form-label" for="qa-question">Your Question</label>
+              <input class="form-input" type="text" id="qa-question" placeholder="e.g., What is the difference between mitosis and meiosis?" maxlength="1000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="qa-context">Context (Optional)</label>
+              <textarea class="form-input" id="qa-context" placeholder="Paste any relevant study material to help the AI give a more specific answer..." style="min-height:100px;"></textarea>
+            </div>
+            <button class="btn btn-primary" id="qa-btn" onclick="askQuestion()">
+              💬 Get Answer <span style="opacity:0.7;font-size:0.8rem;">(+5 XP)</span>
+            </button>
+          </div>
+
+          <div id="qa-output" style="display:none;" class="mt-3">
+            <div class="card">
+              <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                <div style="width:36px;height:36px;background:rgba(255,184,48,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">💬</div>
+                <h3 class="card-title">AI Answer</h3>
+              </div>
+
+              <div class="qa-main-answer" id="qa-main-answer"></div>
+
+              <div id="qa-key-points-section" style="margin-bottom:1.25rem;">
+                <div class="qa-section-title">Key Points</div>
+                <ul class="qa-list" id="qa-key-points"></ul>
+              </div>
+
+              <div id="qa-examples-section" style="margin-bottom:1.25rem;display:none;">
+                <div class="qa-section-title">Examples</div>
+                <ul class="qa-list" id="qa-examples"></ul>
+              </div>
+
+              <div id="qa-reading-section" style="display:none;">
+                <div class="qa-section-title">Explore Further</div>
+                <div id="qa-further-reading" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q&A History -->
+          <div class="card mt-3" id="qa-history-card" style="display:none;">
+            <h3 class="card-title mb-2">This Session</h3>
+            <div id="qa-history"></div>
+          </div>
+        </div>
+
+        <!-- ─── Profile Panel ─────────────────────────────── -->
+        <div class="feature-panel" id="panel-profile">
+          <div class="feature-header">
+            <div class="feature-header-icon purple">👤</div>
+            <div class="feature-header-text">
+              <h2>Your Profile</h2>
+              <p>Track your progress and manage your account.</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <h3 class="card-title mb-3">Account Info</h3>
+              <div style="text-align:center;margin-bottom:1.5rem;">
+                <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,var(--accent-primary),var(--accent-purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:2rem;color:#fff;margin:0 auto 1rem;" id="profile-avatar">U</div>
+                <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:700;" id="profile-username">Loading...</div>
+                <div style="color:var(--text-secondary);font-size:0.85rem;" id="profile-email"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Update Username</label>
+                <input class="form-input" type="text" id="profile-username-input" placeholder="New username" maxlength="20">
+              </div>
+              <button class="btn btn-outline btn-full" onclick="updateUsername()">Save Changes</button>
+            </div>
+
+            <div class="card">
+              <h3 class="card-title mb-3">Gamification Stats</h3>
+              <div class="activity-item">
+                <div class="activity-icon stat-icon purple">⚡</div>
+                <div class="activity-info">
+                  <div class="activity-type">Total XP</div>
+                </div>
+                <div class="activity-xp" id="profile-xp">—</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon stat-icon cyan">🏅</div>
+                <div class="activity-info">
+                  <div class="activity-type">Current Level</div>
+                </div>
+                <div class="activity-xp" id="profile-level">—</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon stat-icon orange">🔥</div>
+                <div class="activity-info">
+                  <div class="activity-type">Day Streak</div>
+                </div>
+                <div class="activity-xp" id="profile-streak">—</div>
+              </div>
+
+              <div style="margin-top:1.5rem;">
+                <div style="display:flex;justify-content:space-between;font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.5rem;">
+                  <span>Level Progress</span>
+                  <span id="profile-xp-label"></span>
+                </div>
+                <div class="xp-bar-wrapper" style="height:10px;">
+                  <div class="xp-bar-fill" id="profile-xp-bar" style="width:0%"></div>
+                </div>
+              </div>
+
+              <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border-glass);">
+                <button class="btn btn-danger btn-full" onclick="confirmSignOut()">Sign Out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /page-content -->
+    </main>
+  </div><!-- /app-layout -->
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+  <script>
+    // ─── State ──────────────────────────────────────────────
+    let currentPanel = 'dashboard';
+    let quizData = null;
+    let quizAnswers = {};
+    let flashcardData = null;
+    let currentCardIndex = 0;
+    let qaHistory = [];
+    let userProfile = null;
+
+    // ─── Init ────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!requireAuth()) return;
+      initSidebar();
+      loadSidebarUser();
+      loadDashboard();
+      attachCharCounter(document.getElementById('summary-input'), document.getElementById('summary-char-count'));
+      attachCharCounter(document.getElementById('quiz-input'), document.getElementById('quiz-char-count'));
+      attachCharCounter(document.getElementById('flashcard-input'), document.getElementById('flashcard-char-count'));
+    });
+
+    // ─── Panel Navigation ────────────────────────────────────
+    function showPanel(panelName) {
+      document.querySelectorAll('.feature-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(`panel-${panelName}`).classList.add('active');
+      const navEl = document.getElementById(`nav-${panelName}`);
+      if (navEl) navEl.classList.add('active');
+      document.getElementById('page-title').textContent = {
+        dashboard: 'Dashboard',
+        summary: 'AI Summary',
+        quiz: 'Quiz Generator',
+        flashcards: 'Flashcards',
+        qa: 'Q&A Assistant',
+        profile: 'Profile'
+      }[panelName] || panelName;
+
+      currentPanel = panelName;
+      document.getElementById('sidebar').classList.remove('open');
+
+      if (panelName === 'profile') loadProfile();
+    }
+
+    // ─── Dashboard Load ──────────────────────────────────────
+    async function loadDashboard() {
+      try {
+        const [profileData, activityData] = await Promise.all([
+          api.getProfile(),
+          api.getActivities(10)
+        ]);
+
+        userProfile = profileData.user;
+        const stats = profileData.stats;
+
+        // Update stat cards
+        document.getElementById('stat-xp').textContent = (userProfile.xp || 0).toLocaleString();
+        document.getElementById('stat-level').textContent = userProfile.level || 1;
+        document.getElementById('stat-streak').textContent = userProfile.streak || 0;
+        document.getElementById('stat-activities').textContent = stats.totalActivities || 0;
+
+        // Progress counts
+        document.getElementById('count-summaries').textContent = stats.summaries || 0;
+        document.getElementById('count-quizzes').textContent = stats.quizzes || 0;
+        document.getElementById('count-flashcards').textContent = stats.flashcardSets || 0;
+        document.getElementById('count-questions').textContent = stats.questions || 0;
+
+        // XP bar
+        const { xpInLevel, xpForNext, progress } = getLevelInfo(userProfile.xp || 0);
+        document.getElementById('xp-bar-dashboard').style.width = `${progress}%`;
+        document.getElementById('xp-progress-label').textContent = `${xpInLevel} / ${xpForNext} XP`;
+
+        // Header info
+        if (userProfile.streak > 0) {
+          document.getElementById('header-streak').textContent = `🔥 ${userProfile.streak} day streak`;
+        }
+        document.getElementById('user-xp-badge').textContent = `${(userProfile.xp || 0).toLocaleString()} XP`;
+
+        // Sidebar XP label
+        const sidebarXPLabel = document.getElementById('user-xp-label');
+        if (sidebarXPLabel) sidebarXPLabel.textContent = `${(userProfile.xp || 0).toLocaleString()} XP total`;
+
+        // Activities
+        const activityList = document.getElementById('activity-list');
+        if (activityData.activities && activityData.activities.length > 0) {
+          activityList.innerHTML = activityData.activities.map(renderActivity).join('');
+        } else {
+          activityList.innerHTML = `<div class="empty-state">
+            <div class="empty-state-icon">📊</div>
+            <div class="empty-state-title">No activities yet</div>
+            <div class="empty-state-text">Start studying to earn XP!</div>
+          </div>`;
+        }
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+        Toast.error('Failed to load dashboard', err.message);
+      }
+    }
+
+    // ─── Summary Feature ─────────────────────────────────────
+    async function generateSummary() {
+      const text = document.getElementById('summary-input').value.trim();
+      const btn = document.getElementById('summary-btn');
+
+      if (text.length < 50) {
+        Toast.error('Too short', 'Please enter at least 50 characters.');
+        return;
+      }
+
+      setButtonLoading(btn, true);
+      document.getElementById('summary-output').style.display = 'none';
+
+      try {
+        const data = await api.generateSummary(text);
+        const s = data.summary;
+
+        document.getElementById('summary-title').textContent = s.title;
+        document.getElementById('summary-overview').textContent = s.overview;
+
+        // Key points
+        document.getElementById('summary-key-points').innerHTML = s.keyPoints.map(p =>
+          `<div class="key-point">
+            <div class="key-point-dot"></div>
+            <span>${p}</span>
+          </div>`
+        ).join('');
+
+        // Concepts
+        if (s.concepts && s.concepts.length > 0) {
+          document.getElementById('summary-concepts').innerHTML = s.concepts.map(c =>
+            `<div class="concept-card">
+              <div class="concept-term">${c.term}</div>
+              <div class="concept-def">${c.definition}</div>
+            </div>`
+          ).join('');
+          document.getElementById('summary-concepts-section').style.display = 'block';
+        } else {
+          document.getElementById('summary-concepts-section').style.display = 'none';
+        }
+
+        // Conclusion
+        document.getElementById('summary-conclusion').textContent = s.conclusion;
+
+        // Badges
+        const diffColors = { beginner: 'green', intermediate: 'cyan', advanced: 'orange' };
+        document.getElementById('summary-badges').innerHTML = `
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <span class="badge badge-${diffColors[s.difficulty] || 'purple'}">${s.difficulty || 'general'}</span>
+            <span class="badge badge-cyan">⏱ ${s.readingTime || '—'} min read</span>
+          </div>`;
+
+        document.getElementById('summary-output').style.display = 'block';
+        handleXPResult(data.xp);
+        loadDashboard();
+      } catch (err) {
+        Toast.error('Summary failed', err.message);
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    }
+
+    // ─── Quiz Feature ─────────────────────────────────────────
+    async function generateQuiz() {
+      const text = document.getElementById('quiz-input').value.trim();
+      const numQuestions = parseInt(document.getElementById('quiz-count').value);
+      const btn = document.getElementById('quiz-btn');
+
+      if (text.length < 50) {
+        Toast.error('Too short', 'Please enter at least 50 characters.');
+        return;
+      }
+
+      setButtonLoading(btn, true);
+
+      try {
+        const data = await api.generateQuiz(text, numQuestions);
+        quizData = data.quiz;
+        quizAnswers = {};
+
+        document.getElementById('quiz-input-card').style.display = 'none';
+        document.getElementById('quiz-output').style.display = 'block';
+        document.getElementById('quiz-title').textContent = quizData.title;
+        document.getElementById('quiz-score-section').style.display = 'none';
+
+        renderQuizQuestions();
+        handleXPResult(data.xp);
+        loadDashboard();
+      } catch (err) {
+        Toast.error('Quiz generation failed', err.message);
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    }
+
+    function renderQuizQuestions() {
+      const container = document.getElementById('quiz-questions');
+      const total = quizData.questions.length;
+      updateQuizProgress();
+
+      container.innerHTML = quizData.questions.map((q, qi) => `
+        <div class="quiz-question" id="question-${qi}">
+          <div class="question-number">Question ${qi + 1} of ${total}</div>
+          <div class="question-text">${q.question}</div>
+          <div class="quiz-options">
+            ${q.options.map((opt, oi) => `
+              <button class="quiz-option" onclick="selectAnswer(${qi}, ${oi})" id="opt-${qi}-${oi}">
+                <span class="option-letter">${['A','B','C','D'][oi]}</span>
+                <span>${opt}</span>
+              </button>
+            `).join('')}
+          </div>
+          <div class="quiz-explanation" id="explanation-${qi}">
+            💡 ${q.explanation}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectAnswer(questionIndex, optionIndex) {
+      if (quizAnswers[questionIndex] !== undefined) return;
+
+      const q = quizData.questions[questionIndex];
+      quizAnswers[questionIndex] = optionIndex;
+
+      // Mark options
+      q.options.forEach((_, oi) => {
+        const btn = document.getElementById(`opt-${questionIndex}-${oi}`);
+        btn.disabled = true;
+        if (oi === q.correctIndex) btn.classList.add('correct');
+        else if (oi === optionIndex) btn.classList.add('incorrect');
+      });
+
+      // Show explanation
+      document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+
+      updateQuizProgress();
+
+      // Check if all answered
+      if (Object.keys(quizAnswers).length === quizData.questions.length) {
+        setTimeout(showQuizResults, 800);
+      }
+    }
+
+    function updateQuizProgress() {
+      const answered = Object.keys(quizAnswers).length;
+      const total = quizData ? quizData.questions.length : 0;
+      const pct = total > 0 ? (answered / total) * 100 : 0;
+      document.getElementById('quiz-progress-bar').style.width = `${pct}%`;
+      document.getElementById('quiz-progress-text').textContent = `${answered} / ${total}`;
+    }
+
+    function showQuizResults() {
+      const total = quizData.questions.length;
+      const correct = quizData.questions.filter((q, i) => quizAnswers[i] === q.correctIndex).length;
+      const pct = Math.round((correct / total) * 100);
+
+      document.getElementById('quiz-score-display').textContent = `${correct}/${total}`;
+      document.getElementById('quiz-score-msg').textContent = pct >= 80
+        ? '🎉 Excellent work! You\'re mastering this material!'
+        : pct >= 60
+        ? '👍 Good job! Review the missed questions to improve.'
+        : '📚 Keep studying! Practice makes perfect.';
+
+      document.getElementById('quiz-score-section').style.display = 'block';
+      document.getElementById('quiz-score-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function resetQuiz() {
+      quizData = null;
+      quizAnswers = {};
+      document.getElementById('quiz-input-card').style.display = 'block';
+      document.getElementById('quiz-output').style.display = 'none';
+      document.getElementById('quiz-input').value = '';
+      document.getElementById('quiz-char-count').textContent = '0 / 10,000';
+    }
+
+    // ─── Flashcard Feature ───────────────────────────────────
+    async function generateFlashcards() {
+      const text = document.getElementById('flashcard-input').value.trim();
+      const numCards = parseInt(document.getElementById('flashcard-count').value);
+      const btn = document.getElementById('flashcard-btn');
+
+      if (text.length < 50) {
+        Toast.error('Too short', 'Please enter at least 50 characters.');
+        return;
+      }
+
+      setButtonLoading(btn, true);
+
+      try {
+        const data = await api.generateFlashcards(text, numCards);
+        flashcardData = data.flashcards;
+        currentCardIndex = 0;
+
+        document.getElementById('flashcard-input-card').style.display = 'none';
+        document.getElementById('flashcard-output').style.display = 'block';
+        document.getElementById('flashcard-set-title').textContent = flashcardData.title;
+        document.getElementById('flashcard-set-subtitle').textContent = `${flashcardData.cards.length} cards • Click to flip`;
+
+        renderCurrentCard();
+        renderFlashcardGrid();
+
+        handleXPResult(data.xp);
+        loadDashboard();
+      } catch (err) {
+        Toast.error('Flashcard generation failed', err.message);
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    }
+
+    function renderCurrentCard() {
+      const card = flashcardData.cards[currentCardIndex];
+      const cardEl = document.getElementById('flashcard-current');
+      cardEl.classList.remove('flipped');
+
+      document.getElementById('card-front-content').textContent = card.front;
+      document.getElementById('card-back-content').textContent = card.back;
+      document.getElementById('card-hint').textContent = card.hint ? `Hint: ${card.hint}` : '';
+
+      // Difficulty dots
+      const dots = ['easy', 'medium', 'hard'];
+      const filled = { easy: 1, medium: 2, hard: 3 }[card.difficulty] || 1;
+      document.getElementById('card-difficulty').innerHTML = dots.map((d, i) =>
+        `<div class="difficulty-dot ${i < filled ? `filled ${card.difficulty}` : ''}"></div>`
+      ).join('');
+
+      const total = flashcardData.cards.length;
+      document.getElementById('fc-counter').textContent = `${currentCardIndex + 1} / ${total}`;
+      document.getElementById('fc-prev').disabled = currentCardIndex === 0;
+      document.getElementById('fc-next').disabled = currentCardIndex === total - 1;
+    }
+
+    function flipCard() {
+      document.getElementById('flashcard-current').classList.toggle('flipped');
+    }
+
+    function nextCard() {
+      if (currentCardIndex < flashcardData.cards.length - 1) {
+        currentCardIndex++;
+        renderCurrentCard();
+      }
+    }
+
+    function prevCard() {
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+        renderCurrentCard();
+      }
+    }
+
+    function renderFlashcardGrid() {
+      document.getElementById('flashcard-grid').innerHTML = flashcardData.cards.map((c, i) => `
+        <div class="card" style="padding:1rem;cursor:pointer;border-color:${currentCardIndex===i?'var(--accent-primary)':'var(--border-glass)'};" onclick="jumpToCard(${i})">
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:0.4rem;">Card ${i+1}</div>
+          <div style="font-size:0.88rem;font-weight:500;">${c.front}</div>
+          <div class="badge badge-${{'easy':'green','medium':'orange','hard':'pink'}[c.difficulty]||'purple'}" style="margin-top:0.5rem;">${c.difficulty||'medium'}</div>
+        </div>
+      `).join('');
+    }
+
+    function jumpToCard(index) {
+      currentCardIndex = index;
+      renderCurrentCard();
+      renderFlashcardGrid();
+      document.getElementById('flashcard-current').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function resetFlashcards() {
+      flashcardData = null;
+      currentCardIndex = 0;
+      document.getElementById('flashcard-input-card').style.display = 'block';
+      document.getElementById('flashcard-output').style.display = 'none';
+      document.getElementById('flashcard-input').value = '';
+    }
+
+    // Keyboard nav for flashcards
+    document.addEventListener('keydown', (e) => {
+      if (currentPanel !== 'flashcards' || !flashcardData) return;
+      if (e.key === 'ArrowRight') nextCard();
+      if (e.key === 'ArrowLeft') prevCard();
+      if (e.key === ' ') { e.preventDefault(); flipCard(); }
+    });
+
+    // ─── Q&A Feature ─────────────────────────────────────────
+    async function askQuestion() {
+      const question = document.getElementById('qa-question').value.trim();
+      const context = document.getElementById('qa-context').value.trim();
+      const btn = document.getElementById('qa-btn');
+
+      if (question.length < 5) {
+        Toast.error('Too short', 'Please enter a valid question.');
+        return;
+      }
+
+      setButtonLoading(btn, true);
+
+      try {
+        const data = await api.askQuestion(question, context);
+        const a = data.answer;
+
+        document.getElementById('qa-main-answer').textContent = a.answer;
+
+        // Key points
+        if (a.keyPoints && a.keyPoints.length > 0) {
+          document.getElementById('qa-key-points').innerHTML = a.keyPoints.map(p =>
+            `<li>${p}</li>`
+          ).join('');
+          document.getElementById('qa-key-points-section').style.display = 'block';
+        }
+
+        // Examples
+        if (a.examples && a.examples.length > 0) {
+          document.getElementById('qa-examples').innerHTML = a.examples.map(e =>
+            `<li>${e}</li>`
+          ).join('');
+          document.getElementById('qa-examples-section').style.display = 'block';
+        } else {
+          document.getElementById('qa-examples-section').style.display = 'none';
+        }
+
+        // Further reading
+        if (a.furtherReading && a.furtherReading.length > 0) {
+          document.getElementById('qa-further-reading').innerHTML = a.furtherReading.map(t =>
+            `<span class="badge badge-purple">📚 ${t}</span>`
+          ).join('');
+          document.getElementById('qa-reading-section').style.display = 'block';
+        } else {
+          document.getElementById('qa-reading-section').style.display = 'none';
+        }
+
+        document.getElementById('qa-output').style.display = 'block';
+
+        // Add to history
+        qaHistory.unshift({ question, answer: a.answer });
+        renderQAHistory();
+
+        handleXPResult(data.xp);
+        document.getElementById('qa-question').value = '';
+        loadDashboard();
+      } catch (err) {
+        Toast.error('Q&A failed', err.message);
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    }
+
+    function renderQAHistory() {
+      if (qaHistory.length === 0) return;
+      const card = document.getElementById('qa-history-card');
+      card.style.display = 'block';
+      document.getElementById('qa-history').innerHTML = qaHistory.slice(0, 5).map(h => `
+        <div class="activity-item">
+          <div class="activity-icon stat-icon orange">💬</div>
+          <div class="activity-info">
+            <div class="activity-type">${h.question}</div>
+            <div class="activity-time" style="color:var(--text-muted);font-size:0.78rem;">${h.answer.substring(0, 80)}...</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Enter to ask
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('qa-question').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') askQuestion();
+      });
+    });
+
+    // ─── Profile ─────────────────────────────────────────────
+    async function loadProfile() {
+      try {
+        const data = await api.getProfile();
+        const user = data.user;
+        userProfile = user;
+
+        document.getElementById('profile-avatar').textContent = (user.username || 'U')[0].toUpperCase();
+        document.getElementById('profile-username').textContent = user.username || '—';
+        document.getElementById('profile-email').textContent = user.email || '—';
+        document.getElementById('profile-username-input').value = user.username || '';
+        document.getElementById('profile-xp').textContent = `${(user.xp || 0).toLocaleString()} XP`;
+        document.getElementById('profile-level').textContent = `Level ${user.level || 1}`;
+        document.getElementById('profile-streak').textContent = `${user.streak || 0} days`;
+
+        const { xpInLevel, xpForNext, progress } = getLevelInfo(user.xp || 0);
+        document.getElementById('profile-xp-bar').style.width = `${progress}%`;
+        document.getElementById('profile-xp-label').textContent = `${xpInLevel} / ${xpForNext} XP`;
+      } catch (err) {
+        Toast.error('Failed to load profile', err.message);
+      }
+    }
+
+    async function updateUsername() {
+      const username = document.getElementById('profile-username-input').value.trim();
+      if (!username) { Toast.error('Invalid', 'Please enter a username'); return; }
+
+      try {
+        await api.updateProfile({ username });
+        Toast.success('Username updated!');
+        loadProfile();
+        loadSidebarUser();
+      } catch (err) {
+        Toast.error('Update failed', err.message);
+      }
+    }
+
+    function confirmSignOut() {
+      if (confirm('Are you sure you want to sign out?')) {
+        api.signOut().finally(() => window.location.href = '/login.html');
+      }
+    }
+  </script>
+</body>
+</html>

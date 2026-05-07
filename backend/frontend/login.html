@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — SmartStudyAI</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-bg-orb orb-1"></div>
+    <div class="auth-bg-orb orb-2"></div>
+
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">🧠</div>
+        <h1>SmartStudyAI</h1>
+        <p>Your AI-powered learning companion</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs mb-3">
+        <button class="tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+        <button class="tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <div id="signin-form">
+        <div class="form-group">
+          <label class="form-label" for="signin-email">Email</label>
+          <input class="form-input" type="email" id="signin-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signin-password">Password</label>
+          <input class="form-input" type="password" id="signin-password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div id="signin-error" class="error-msg" style="display:none">
+          <span>⚠️</span>
+          <span id="signin-error-text"></span>
+        </div>
+        <button class="btn btn-primary mt-2" id="signin-btn" onclick="handleSignIn()">
+          Sign In
+        </button>
+      </div>
+
+      <!-- Sign Up Form -->
+      <div id="signup-form" style="display:none">
+        <div class="form-group">
+          <label class="form-label" for="signup-username">Username</label>
+          <input class="form-input" type="text" id="signup-username" placeholder="studymaster99" autocomplete="username" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signup-email">Email</label>
+          <input class="form-input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signup-password">Password</label>
+          <input class="form-input" type="password" id="signup-password" placeholder="Min. 8 characters" autocomplete="new-password">
+        </div>
+        <div id="signup-error" class="error-msg" style="display:none">
+          <span>⚠️</span>
+          <span id="signup-error-text"></span>
+        </div>
+        <button class="btn btn-primary mt-2" id="signup-btn" onclick="handleSignUp()">
+          Create Account
+        </button>
+      </div>
+
+      <div class="auth-link mt-2" id="auth-link-text">
+        Don't have an account? <a href="#" onclick="switchTab('signup')">Sign up free</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Redirect if already logged in
+    document.addEventListener('DOMContentLoaded', () => {
+      redirectIfAuth();
+    });
+
+    function switchTab(tab) {
+      const isSignin = tab === 'signin';
+      document.getElementById('tab-signin').classList.toggle('active', isSignin);
+      document.getElementById('tab-signup').classList.toggle('active', !isSignin);
+      document.getElementById('signin-form').style.display = isSignin ? 'block' : 'none';
+      document.getElementById('signup-form').style.display = isSignin ? 'none' : 'block';
+      document.getElementById('auth-link-text').innerHTML = isSignin
+        ? `Don't have an account? <a href="#" onclick="switchTab('signup')">Sign up free</a>`
+        : `Already have an account? <a href="#" onclick="switchTab('signin')">Sign in</a>`;
+
+      // Clear errors
+      ['signin-error', 'signup-error'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+    }
+
+    function showError(formType, message) {
+      const el = document.getElementById(`${formType}-error`);
+      document.getElementById(`${formType}-error-text`).textContent = message;
+      el.style.display = 'flex';
+    }
+
+    async function handleSignIn() {
+      const email = document.getElementById('signin-email').value.trim();
+      const password = document.getElementById('signin-password').value;
+      const btn = document.getElementById('signin-btn');
+
+      document.getElementById('signin-error').style.display = 'none';
+
+      if (!email || !password) {
+        showError('signin', 'Please fill in all fields');
+        return;
+      }
+
+      setButtonLoading(btn, true);
+      try {
+        const data = await api.signIn(email, password);
+        if (data.user) {
+          localStorage.setItem('ss_user_cache', JSON.stringify(data.user));
+        }
+        Toast.success('Welcome back!', `Good to see you, ${data.user?.username || 'friend'}! 👋`);
+        setTimeout(() => window.location.href = 'dashboard.html', 800);
+      } catch (err) {
+        showError('signin', err.message || 'Sign in failed. Check your credentials.');
+        setButtonLoading(btn, false);
+      }
+    }
+
+    async function handleSignUp() {
+      const username = document.getElementById('signup-username').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const btn = document.getElementById('signup-btn');
+
+      document.getElementById('signup-error').style.display = 'none';
+
+      if (!username || !email || !password) {
+        showError('signup', 'Please fill in all fields');
+        return;
+      }
+      if (username.length < 3) {
+        showError('signup', 'Username must be at least 3 characters');
+        return;
+      }
+      if (password.length < 8) {
+        showError('signup', 'Password must be at least 8 characters');
+        return;
+      }
+
+      setButtonLoading(btn, true);
+      try {
+        const data = await api.signUp(email, password, username);
+        Toast.success('Account created!', `Welcome to SmartStudyAI, ${username}! 🎉`);
+        setTimeout(() => window.location.href = 'dashboard.html', 900);
+      } catch (err) {
+        showError('signup', err.message || 'Sign up failed. Please try again.');
+        setButtonLoading(btn, false);
+      }
+    }
+
+    // Enter key support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const signinActive = document.getElementById('signin-form').style.display !== 'none';
+        if (signinActive) handleSignIn();
+        else handleSignUp();
+      }
+    });
+  </script>
+</body>
+</html>
