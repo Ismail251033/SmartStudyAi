@@ -70,6 +70,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/user', userRoutes);
 
+// Static frontend (must come before the 404 handler)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+app.use(express.static(path.join(__dirname, '../frontend')));
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
@@ -77,15 +83,18 @@ app.use('*', (req, res) => {
 
 // Error handler
 app.use(errorHandler);
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
-});
-app.use(express.static(path.join(__dirname, '../frontend')));
 
 const PORT = process.env.PORT || 3001;
+const ENV = process.env.NODE_ENV || 'development';
 
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 SmartStudyAI Backend running on port ${PORT}`);
+  console.log(`🌍 Environment: ${ENV}`);
+});
+
+server.on('error', (err) => {
+  console.error('❌ Server failed to start:', err.message);
+  process.exit(1);
 });
 
 
