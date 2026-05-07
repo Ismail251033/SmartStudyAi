@@ -12,8 +12,7 @@
 
 window.SMARTSTUDY_CONFIG = {
   // ── Change this to your backend URL ──────────────────────
-  API_URL: 'http://localhost:3001/api',
-
+ API_URL:'https://smartstudyai-production-9ccb.up.railway.app',
   // ── App settings (no need to change these) ────────────────
   APP_NAME: 'SmartStudyAI',
   VERSION: '1.0.0',
